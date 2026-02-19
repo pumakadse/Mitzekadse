@@ -39,17 +39,19 @@
         @apply border-border;
     }
     
-    html {
-        @apply dark;
+    html, body {
+        background-color: #050505;
+        color: #FFFFFF;
     }
     
     body {
-        @apply bg-background text-text-primary font-body antialiased;
-        background-color: #050505;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
     
     h1, h2, h3, h4, h5, h6 {
-        @apply font-heading;
+        font-family: 'Barlow Condensed', sans-serif;
     }
 }
 

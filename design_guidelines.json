@@ -1,0 +1,196 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "FlashPulse",
+      "persona": "E1: The Anti-AI Designer",
+      "metaphor": "Stock Market Terminal x Stadium Night Lights",
+      "tone": "Electric, Precise, Urgent, Authoritative"
+    },
+    "typography": {
+      "font_families": {
+        "headings": "Barlow Condensed, sans-serif",
+        "body": "Inter, sans-serif",
+        "data": "JetBrains Mono, monospace"
+      },
+      "weights": {
+        "light": 300,
+        "regular": 400,
+        "medium": 500,
+        "bold": 700,
+        "black": 900
+      },
+      "scale": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem",
+        "5xl": "3rem",
+        "6xl": "3.75rem"
+      },
+      "letter_spacing": {
+        "tightest": "-0.05em",
+        "tighter": "-0.025em",
+        "normal": "0em",
+        "wide": "0.025em",
+        "widest": "0.1em"
+      },
+       "instructions": "Use Barlow Condensed for all section titles and team names in headers. Use JetBrains Mono for ALL numbers (scores, time, stats, odds). Use Inter for general UI text (labels, descriptions)."
+    },
+    "colors": {
+      "mode": "dark",
+      "palette": {
+        "background": {
+          "default": "#050505",
+          "paper": "#0B0E14",
+          "subtle": "#121212"
+        },
+        "primary": {
+          "main": "#00FF88",
+          "light": "#5CFFB1",
+          "dark": "#00CC6A",
+          "contrast": "#000000"
+        },
+        "secondary": {
+          "main": "#FF0055",
+          "light": "#FF5C8D",
+          "dark": "#CC0044",
+          "contrast": "#FFFFFF"
+        },
+        "accent": {
+          "main": "#FAFF00",
+          "contrast": "#000000"
+        },
+        "text": {
+          "primary": "#FFFFFF",
+          "secondary": "#94A3B8",
+          "tertiary": "#64748B",
+          "disabled": "#475569"
+        },
+        "status": {
+            "live": "#00FF88",
+            "finished": "#94A3B8",
+            "scheduled": "#64748B",
+            "card_yellow": "#FAFF00",
+            "card_red": "#FF0055"
+        },
+        "border": {
+            "default": "rgba(255, 255, 255, 0.1)",
+            "active": "rgba(0, 255, 136, 0.3)"
+        }
+      },
+      "gradients": {
+        "hero": "linear-gradient(180deg, rgba(5,5,5,0) 0%, #050505 100%)",
+        "glass": "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
+        "live_pulse": "radial-gradient(circle, rgba(0,255,136,0.5) 0%, rgba(0,255,136,0) 70%)"
+      }
+    },
+    "spacing": {
+      "scale": [0, 4, 8, 12, 16, 24, 32, 48, 64, 96, 128],
+      "layout": {
+        "container_padding": "p-4 md:p-6 lg:p-8",
+        "section_gap": "gap-8 md:gap-12",
+        "component_gap": "gap-4"
+      }
+    },
+    "borders": {
+      "radius": {
+        "sm": "2px",
+        "md": "4px",
+        "lg": "8px",
+        "full": "9999px"
+      },
+      "width": {
+        "default": "1px",
+        "focus": "2px"
+      }
+    },
+    "shadows": {
+        "glow": "0 0 20px rgba(0, 255, 136, 0.15)",
+        "card": "0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3)"
+    },
+    "layout": {
+      "grid_system": "Bento Grid Mode B (High Density)",
+      "breakpoints": {
+        "sm": "640px",
+        "md": "768px",
+        "lg": "1024px",
+        "xl": "1280px",
+        "2xl": "1536px"
+      },
+      "containers": {
+        "max_width": "max-w-7xl"
+      }
+    },
+    "animation": {
+      "transition": {
+        "fast": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "normal": "300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "slow": "500ms cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+      "keyframes": {
+          "pulse-glow": "0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }"
+      }
+    }
+  },
+  "component_guidelines": {
+    "buttons": {
+        "primary": "bg-primary text-primary-foreground font-bold font-heading uppercase tracking-wider hover:bg-primary-dark transition-all rounded-sm",
+        "secondary": "bg-secondary text-secondary-foreground font-bold font-heading uppercase tracking-wider hover:bg-secondary-dark transition-all rounded-sm",
+        "ghost": "bg-transparent text-text-primary hover:bg-white/5 transition-all rounded-sm",
+        "outline": "border border-border text-text-primary hover:border-primary hover:text-primary transition-all rounded-sm"
+    },
+    "cards": {
+        "default": "bg-background-paper border border-border rounded-lg shadow-card relative overflow-hidden group",
+        "interactive": "hover:border-primary/50 hover:shadow-glow transition-all duration-300 cursor-pointer"
+    },
+    "inputs": {
+        "default": "bg-background-subtle border border-border rounded-sm px-4 py-2 text-text-primary focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-text-disabled"
+    },
+    "navigation": {
+        "sidebar": "fixed left-0 top-0 h-full w-64 bg-background-paper border-r border-border z-50 hidden lg:flex flex-col",
+        "bottom_nav": "fixed bottom-0 left-0 w-full bg-background-paper/90 backdrop-blur-lg border-t border-border z-50 flex justify-around py-3 lg:hidden"
+    },
+    "match_row": {
+        "container": "grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-4 p-4 border-b border-border/50 hover:bg-white/5 transition-colors cursor-pointer relative",
+        "live_indicator": "absolute left-0 top-0 bottom-0 w-1 bg-primary animate-pulse"
+    }
+  },
+  "visual_assets": {
+    "images": {
+      "hero_backgrounds": [
+        "https://images.unsplash.com/photo-1709078477781-3f885189ecbf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwzfHxzb2NjZXIlMjBzdGFkaXVtJTIwbmlnaHQlMjBhdG1vc3BoZXJlJTIwZmxvb2RsaWdodHN8ZW58MHx8fHwxNzcxNTA4NzQzfDA&ixlib=rb-4.1.0&q=85",
+        "https://images.pexels.com/photos/28827841/pexels-photo-28827841.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "featured_match": [
+        "https://images.pexels.com/photos/918798/pexels-photo-918798.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+         "https://images.pexels.com/photos/11953753/pexels-photo-11953753.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ]
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "stroke-width: 1.5px; size: 20px"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Install Google Fonts: Barlow Condensed (400, 700, 900), JetBrains Mono (400, 500), Inter (400, 500, 600).",
+    "Configure Tailwind: Add the custom colors, fonts, and spacing scales defined above.",
+    "Force Dark Mode: Apply 'dark' class to the html/body tag by default. Do not implement a light mode toggle unless explicitly asked later.",
+    "Layout Strategy: Use the 'Bento Grid Mode B' for the dashboard. Matches are rows, not big cards. Maximize data density.",
+    "Component Overrides: Shadcn components must be styled to match the 'background.paper' and 'border.default' colors. Remove default rounded-xl and use rounded-sm or rounded-md for a sharper, tech feel.",
+    "Charts: Use Recharts with custom tooltips (dark bg, neon borders). No grid lines on charts, just axes.",
+    "Motion: Add 'framer-motion' for live score updates (animate the number changing).",
+    "Accessibility: Ensure text contrast ratios are met. Use lighter grays (#94A3B8) on dark backgrounds, not dark grays."
+  ],
+  "universal_guidelines": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts. Use grids.",
+    "Create depth through layered design elements with z-index hierarchy and glass borders.",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable for layout containers, but TIGHT spacing for data rows.",
+    "Never use AI assistant Emoji characters."
+  ]
+}

@@ -170,6 +170,27 @@ class SportmonksClient:
     async def search_players(self, query: str) -> Dict[str, Any]:
         return await self._make_request(f"players/search/{query}")
 
+    async def get_head_to_head(self, team1_id: int, team2_id: int) -> Dict[str, Any]:
+        """Get head-to-head matches between two teams"""
+        params = {
+            "include": "participants;scores;events;lineups;state;league"
+        }
+        return await self._make_request(f"fixtures/head-to-head/{team1_id}/{team2_id}", params)
+
+    async def get_team_fixtures(self, team_id: int, include: Optional[str] = None) -> Dict[str, Any]:
+        """Get recent fixtures for a team"""
+        params = {}
+        if include:
+            params["include"] = include
+        return await self._make_request(f"fixtures/teams/{team_id}", params)
+
+    async def get_fixture_with_full_details(self, fixture_id: int) -> Dict[str, Any]:
+        """Get fixture with all details for H2H comparison"""
+        params = {
+            "include": "participants;scores;events;lineups.player;state;league;statistics"
+        }
+        return await self._make_request(f"fixtures/{fixture_id}", params)
+
 sportmonks_client = SportmonksClient()
 
 
@@ -325,6 +346,49 @@ async def search_teams(query: str = Query(..., min_length=2)):
 @api_router.get("/search/players")
 async def search_players(query: str = Query(..., min_length=2)):
     return await sportmonks_client.search_players(query)
+
+
+# ==================== HEAD-TO-HEAD ROUTES ====================
+
+@api_router.get("/h2h/{team1_id}/{team2_id}")
+async def get_head_to_head(team1_id: int, team2_id: int):
+    """Get head-to-head matches between two teams (last 5)"""
+    try:
+        result = await sportmonks_client.get_head_to_head(team1_id, team2_id)
+        # Limit to last 5 matches and sort by date
+        matches = result.get("data", [])
+        if isinstance(matches, list):
+            matches = sorted(matches, key=lambda x: x.get("starting_at", ""), reverse=True)[:5]
+            result["data"] = matches
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching H2H: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch head-to-head data")
+
+@api_router.get("/team-form/{team_id}")
+async def get_team_form(team_id: int):
+    """Get last 5 matches for a team (form)"""
+    try:
+        result = await sportmonks_client.get_team_fixtures(
+            team_id, 
+            include="participants;scores;events;state;league"
+        )
+        matches = result.get("data", [])
+        if isinstance(matches, list):
+            # Filter only finished matches and sort by date
+            finished_matches = [m for m in matches if m.get("state", {}).get("id") in [5, 6, 7, 8, 9, 10, 11] or 
+                               'finished' in str(m.get("state", {}).get("name", "")).lower()]
+            finished_matches = sorted(finished_matches, key=lambda x: x.get("starting_at", ""), reverse=True)[:5]
+            result["data"] = finished_matches
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching team form: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch team form data")
+
+@api_router.get("/fixtures/{fixture_id}/full")
+async def get_fixture_full_details(fixture_id: int):
+    """Get fixture with complete details for H2H comparison"""
+    return await sportmonks_client.get_fixture_with_full_details(fixture_id)
 
 
 # ==================== STATUS ROUTES ====================

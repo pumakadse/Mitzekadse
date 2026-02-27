@@ -321,28 +321,28 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     
     // Calculate Y position (vertical - spread players across the pitch width)
     // In football: column 1 = one side, column 4 = other side
-    // Y increases downward in CSS, so col 1 should be at top
     let yPercent;
     if (maxColsInRow === 1) {
       yPercent = 50; // Center for GK
     } else {
-      // Spread from 18% to 82% of the pitch height
-      yPercent = 18 + ((col - 1) / (maxColsInRow - 1)) * 64;
+      // Spread from 15% to 85% of the pitch height
+      yPercent = 15 + ((col - 1) / (maxColsInRow - 1)) * 70;
     }
     
     // Calculate X position (horizontal - depth on pitch)
-    // Row 1 = closest to own goal, Row 4 = attacking position
+    // Row 1 = GK near own goal
+    // Row 4 = Forwards near center/opponent's half
     const totalRows = parts.length + 1; // +1 for GK row
     
     let xPercent;
     if (isHome) {
-      // Home team on left side (GK at left, forwards toward center)
-      // Row 1 (GK) at ~8%, Row 4 (forwards) at ~45%
-      xPercent = 8 + ((row - 1) / (totalRows - 1)) * 37;
+      // Home team on left side
+      // GK (row 1) at 6%, Defenders at ~18%, Midfielders at ~30%, Forwards at ~42%
+      xPercent = 6 + ((row - 1) / (totalRows - 1)) * 38;
     } else {
-      // Away team on right side (GK at right, forwards toward center)
-      // Row 1 (GK) at ~92%, Row 4 (forwards) at ~55%
-      xPercent = 92 - ((row - 1) / (totalRows - 1)) * 37;
+      // Away team on right side  
+      // GK (row 1) at 94%, Defenders at ~82%, Midfielders at ~70%, Forwards at ~58%
+      xPercent = 94 - ((row - 1) / (totalRows - 1)) * 38;
     }
     
     return { x: xPercent, y: yPercent };

@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Layout, Header } from '../components/Layout';
 import { getMatchStatus, getScore, LoadingSpinner, EmptyState } from '../components/MatchComponents';
+import { HeadToHeadSection } from '../components/HeadToHead';
 import { useFixture } from '../hooks/useApi';
 import { useAuth } from '../context/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -196,8 +197,11 @@ const MatchDetail = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="events" className="w-full">
+        <Tabs defaultValue="h2h" className="w-full">
           <TabsList className="w-full bg-background-paper border border-border mb-4">
+            <TabsTrigger value="h2h" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-black">
+              H2H
+            </TabsTrigger>
             <TabsTrigger value="events" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-black">
               Events
             </TabsTrigger>
@@ -208,6 +212,16 @@ const MatchDetail = () => {
               Statistics
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="h2h">
+            <div className="card p-4" data-testid="h2h-tab">
+              <HeadToHeadSection 
+                homeTeam={homeTeam}
+                awayTeam={awayTeam}
+                currentLineups={fixture?.lineups || []}
+              />
+            </div>
+          </TabsContent>
 
           <TabsContent value="events">
             <div className="card p-4" data-testid="events-tab">

@@ -133,12 +133,10 @@ const TeamProfile = () => {
                   </thead>
                   <tbody>
                     {players.map((player, idx) => (
-                      <motion.tr
+                      <tr
                         key={player.player_id || player.id || `player-${idx}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: idx * 0.02 }}
                         className="border-b border-border/50 hover:bg-white/5 cursor-pointer transition-colors"
+                        style={{ animation: `fadeIn 0.3s ease ${idx * 0.02}s both` }}
                         onClick={() => navigate(`/player/${player.player_id || player.player?.id || player.id}`)}
                       >
                         <td className="py-3 px-4 font-data text-text-secondary">
@@ -165,7 +163,7 @@ const TeamProfile = () => {
                             </span>
                           </div>
                         </td>
-                      </motion.tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>

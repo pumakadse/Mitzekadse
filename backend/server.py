@@ -178,11 +178,14 @@ class SportmonksClient:
         return await self._make_request(f"fixtures/head-to-head/{team1_id}/{team2_id}", params)
 
     async def get_team_fixtures(self, team_id: int, include: Optional[str] = None) -> Dict[str, Any]:
-        """Get recent fixtures for a team"""
-        params = {}
+        """Get recent fixtures for a team using correct endpoint"""
+        params = {
+            "per_page": 10,
+            "order": "desc"
+        }
         if include:
             params["include"] = include
-        return await self._make_request(f"fixtures/teams/{team_id}", params)
+        return await self._make_request(f"fixtures/between/2024-01-01/2026-12-31/{team_id}", params)
 
     async def get_fixture_with_full_details(self, fixture_id: int) -> Dict[str, Any]:
         """Get fixture with all details for H2H comparison"""

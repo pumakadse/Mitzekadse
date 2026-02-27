@@ -188,6 +188,36 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
             transition={{ duration: 0.2 }}
             className="border-t border-border"
           >
+            {/* Visual Lineup Pitch */}
+            {(homeLineup.length > 0 || awayLineup.length > 0) && (
+              <div className="p-4 border-b border-border">
+                <h5 className="text-xs text-text-tertiary uppercase mb-3 flex items-center gap-1">
+                  <Users size={12} /> Lineups Comparison
+                </h5>
+                <div className="relative">
+                  <LineupPitch
+                    homeLineup={homeLineup.slice(0, 11)}
+                    awayLineup={awayLineup.slice(0, 11)}
+                    homeTeam={homeTeam}
+                    awayTeam={awayTeam}
+                    homeFormation={fixture?.formations?.localteam_formation || '4-4-2'}
+                    awayFormation={fixture?.formations?.visitorteam_formation || '4-4-2'}
+                    highlightedPlayers={
+                      currentLineups 
+                        ? currentLineups.map(p => p.player_id || p.player?.id).filter(Boolean)
+                        : []
+                    }
+                  />
+                  {currentLineups && currentLineups.length > 0 && (
+                    <div className="mt-2 flex items-center gap-2 text-xs text-text-tertiary">
+                      <span className="w-3 h-3 rounded-full bg-accent" />
+                      <span>Players also in today's lineup</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Home Team Details */}
               <div className="space-y-4">

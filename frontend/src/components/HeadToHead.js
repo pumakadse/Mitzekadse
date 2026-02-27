@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Users, ArrowRightLeft, Target, Square, Clock } from 'lucide-react';
 import { LoadingSpinner } from './MatchComponents';
+import { LineupPitch } from './LineupPitch';
 import { useHeadToHead, useTeamForm } from '../hooks/useApi';
 
 // Helper to get score from fixture

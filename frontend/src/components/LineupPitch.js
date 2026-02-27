@@ -320,13 +320,26 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     }
     
     // Calculate Y position (vertical - spread players across the pitch width)
-    // In football: column 1 = one side, column 4 = other side
+    // INVERTED: Column 1 = bottom (85%), Column max = top (15%)
+    // This makes RB appear on the right side, LB on left side when viewing
     let yPercent;
     if (maxColsInRow === 1) {
       yPercent = 50; // Center for GK
+    } else if (row === 4 && maxColsInRow <= 2) {
+      // Forwards: center them more (don't spread to edges)
+      // 2 strikers: positions at 35% and 65% (centered)
+      if (maxColsInRow === 2) {
+        yPercent = col === 1 ? 35 : 65;
+      } else if (maxColsInRow === 1) {
+        yPercent = 50; // Single striker in center
+      } else {
+        // 3 forwards: 25%, 50%, 75%
+        yPercent = 25 + ((col - 1) / (maxColsInRow - 1)) * 50;
+      }
     } else {
-      // Spread from 15% to 85% of the pitch height
-      yPercent = 15 + ((col - 1) / (maxColsInRow - 1)) * 70;
+      // Defenders and Midfielders: spread from 15% to 85%
+      // INVERTED: col 1 at bottom (85%), col max at top (15%)
+      yPercent = 85 - ((col - 1) / (maxColsInRow - 1)) * 70;
     }
     
     // Calculate X position (horizontal - depth on pitch)

@@ -288,43 +288,71 @@ const getPositionFromName = (positionName, positionId) => {
   return { row: 2, col: 0.5 }; // Default to center midfield
 };
 
-// Main function to get player coordinates
+// Main function to get player coordinates using formation_field
 const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) => {
-  const formationPosition = player?.formation_position;
+  const formationField = player?.formation_field;
   
-  // If we have a formation position, use the formation-based mapping
-  if (formationPosition && formationPosition >= 1 && formationPosition <= 11) {
-    return getPositionCoordinates(formationPosition, formation, isHome);
-  }
-  
-  // Otherwise, try to use position name
-  const positionName = player?.position?.name || player?.player?.position?.name;
-  const positionId = player?.position?.id || player?.player?.position?.id;
-  
-  if (positionName || positionId) {
-    const pos = getPositionFromName(positionName, positionId);
+  // If we have formation_field like "2:3" (row:column), use it directly
+  if (formationField && formationField.includes(':')) {
+    const [row, col] = formationField.split(':').map(n => parseInt(n) || 1);
     
-    let xPercent, yPercent;
-    if (isHome) {
-      xPercent = 8 + (pos.row * 10);
-      yPercent = 15 + (pos.col * 55);
+    // Determine how many columns in this row based on formation
+    // Row 1 = GK (1 player)
+    // Row 2 = Defenders (typically 3-5)
+    // Row 3 = Midfielders (typically 3-5)
+    // Row 4 = Forwards (typically 1-3)
+    // Row 5 = might exist for some formations
+    
+    const parts = formation?.split('-').map(n => parseInt(n) || 0) || [4, 4, 2];
+    let maxColsInRow;
+    
+    if (row === 1) {
+      maxColsInRow = 1; // GK
+    } else if (row === 2) {
+      maxColsInRow = parts[0] || 4; // Defenders
+    } else if (row === 3) {
+      maxColsInRow = parts[1] || 4; // Midfielders
+    } else if (row === 4) {
+      maxColsInRow = parts[2] || 2; // Forwards
+    } else if (row === 5 && parts.length > 3) {
+      maxColsInRow = parts[3] || 1; // Extra row if formation has 4 parts
     } else {
-      xPercent = 92 - (pos.row * 10);
-      yPercent = 15 + (pos.col * 55);
+      maxColsInRow = 4;
     }
     
-    // Add slight offset based on index to prevent overlap
-    yPercent += (index % 3 - 1) * 5;
+    // Calculate Y position (column position - spread across width)
+    // Column 1 = left side, higher column = right side
+    const yPercent = maxColsInRow === 1 
+      ? 50 // Center for GK
+      : 15 + ((col - 1) / (maxColsInRow - 1)) * 55; // 15% to 70%
+    
+    // Calculate X position (row position - depth on pitch)
+    // Row 1 = closest to goal, Row 4+ = closest to opponent
+    let xPercent;
+    const totalRows = parts.length + 1; // +1 for GK
+    
+    if (isHome) {
+      // Home team on left side (attacking right)
+      xPercent = 8 + ((row - 1) / (totalRows - 1)) * 40; // 8% to 48%
+    } else {
+      // Away team on right side (attacking left)
+      xPercent = 92 - ((row - 1) / (totalRows - 1)) * 40; // 92% to 52%
+    }
     
     return { x: xPercent, y: yPercent };
   }
   
-  // Fallback: distribute evenly
-  const row = Math.floor(index / 4);
-  const col = index % 4;
+  // Fallback to formation_position if formation_field not available
+  const formationPosition = player?.formation_position;
+  if (formationPosition && formationPosition >= 1 && formationPosition <= 11) {
+    return getPositionCoordinates(formationPosition, formation, isHome);
+  }
   
-  let xPercent = isHome ? (10 + row * 12) : (90 - row * 12);
-  let yPercent = 12 + (col * 20);
+  // Last resort fallback
+  const rowIdx = Math.floor(index / 4);
+  const colIdx = index % 4;
+  let xPercent = isHome ? (10 + rowIdx * 12) : (90 - rowIdx * 12);
+  let yPercent = 15 + (colIdx * 20);
   
   return { x: xPercent, y: yPercent };
 };

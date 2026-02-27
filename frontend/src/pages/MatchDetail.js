@@ -251,52 +251,23 @@ const MatchDetail = () => {
           </TabsContent>
 
           <TabsContent value="lineups">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="lineups-tab">
-              {/* Home Lineup */}
-              <div className="card p-4">
-                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                  {homeTeam?.image_path && (
-                    <img src={homeTeam.image_path} alt="" className="w-6 h-6 object-contain" />
-                  )}
-                  <span className="font-heading font-bold uppercase">{homeTeam?.name}</span>
-                </div>
-                {homeLineup.length === 0 ? (
-                  <p className="text-text-tertiary text-sm">Lineup not available</p>
-                ) : (
-                  <div className="space-y-2">
-                    {homeLineup.map((player, idx) => (
-                      <div key={idx} className="flex items-center gap-3 text-sm">
-                        <span className="font-data w-6 text-text-tertiary">{player.jersey_number}</span>
-                        <span>{player.player?.display_name || player.player_name}</span>
-                        {player.captain && <span className="text-accent text-xs font-bold">(C)</span>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Away Lineup */}
-              <div className="card p-4">
-                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                  {awayTeam?.image_path && (
-                    <img src={awayTeam.image_path} alt="" className="w-6 h-6 object-contain" />
-                  )}
-                  <span className="font-heading font-bold uppercase">{awayTeam?.name}</span>
-                </div>
-                {awayLineup.length === 0 ? (
-                  <p className="text-text-tertiary text-sm">Lineup not available</p>
-                ) : (
-                  <div className="space-y-2">
-                    {awayLineup.map((player, idx) => (
-                      <div key={idx} className="flex items-center gap-3 text-sm">
-                        <span className="font-data w-6 text-text-tertiary">{player.jersey_number}</span>
-                        <span>{player.player?.display_name || player.player_name}</span>
-                        {player.captain && <span className="text-accent text-xs font-bold">(C)</span>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="card p-4" data-testid="lineups-tab">
+              {homeLineup.length === 0 && awayLineup.length === 0 ? (
+                <p className="text-text-tertiary text-center py-8">Lineups not available yet</p>
+              ) : (
+                <FullLineupView
+                  homeLineup={homeLineup}
+                  awayLineup={awayLineup}
+                  homeTeam={homeTeam}
+                  awayTeam={awayTeam}
+                  homeFormation={fixture?.formations?.localteam_formation || '4-4-2'}
+                  awayFormation={fixture?.formations?.visitorteam_formation || '4-4-2'}
+                  onPlayerClick={(player) => {
+                    const playerId = player?.player_id || player?.player?.id;
+                    if (playerId) navigate(`/player/${playerId}`);
+                  }}
+                />
+              )}
             </div>
           </TabsContent>
 

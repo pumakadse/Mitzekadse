@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Clock, MapPin, Users, Star, Activity } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';

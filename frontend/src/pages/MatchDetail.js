@@ -26,6 +26,8 @@ const EventIcon = ({ type }) => {
 const MatchDetail = () => {
   const { fixtureId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'h2h';
   const { data: fixture, loading, error } = useFixture(fixtureId);
   const { isAuthenticated, isFavoriteTeam, addFavoriteTeam, removeFavoriteTeam } = useAuth();
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Activity, Calendar, Trophy, Search, User } from 'lucide-react';
+import { Footer } from './Footer';
 
 const navItems = [
   { path: '/', icon: Activity, label: 'Live' },

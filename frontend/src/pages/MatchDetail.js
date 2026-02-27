@@ -52,6 +52,17 @@ const MatchDetail = () => {
   const homeLineup = fixture?.lineups?.filter(p => p.team_id === homeTeam?.id) || [];
   const awayLineup = fixture?.lineups?.filter(p => p.team_id === awayTeam?.id) || [];
 
+  // Extract formations from the fixture
+  const formations = useMemo(() => {
+    const formationsData = fixture?.formations || [];
+    const homeForm = formationsData.find(f => f.location === 'home' || f.participant_id === homeTeam?.id);
+    const awayForm = formationsData.find(f => f.location === 'away' || f.participant_id === awayTeam?.id);
+    return {
+      home: homeForm?.formation || '4-4-2',
+      away: awayForm?.formation || '4-4-2'
+    };
+  }, [fixture?.formations, homeTeam?.id, awayTeam?.id]);
+
   if (loading) {
     return (
       <Layout>

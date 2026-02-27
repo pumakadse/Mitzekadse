@@ -34,8 +34,9 @@ const TeamProfile = () => {
     );
   }
 
-  const players = team.squad || team.players || [];
+  const players = team.players || team.squad || [];
   const venue = team.venue;
+  const coach = team.coach || null;
 
   return (
     <Layout>

@@ -335,7 +335,7 @@ async def get_standings(season_id: int, include: Optional[str] = Query("particip
     return await sportmonks_client.get_standings(season_id, include=include)
 
 @api_router.get("/teams/{team_id}")
-async def get_team(team_id: int, include: Optional[str] = Query("squad.player;venue")):
+async def get_team(team_id: int, include: Optional[str] = Query("players.player;venue")):
     return await sportmonks_client.get_team(team_id, include=include)
 
 @api_router.get("/players/{player_id}")
@@ -344,11 +344,17 @@ async def get_player(player_id: int, include: Optional[str] = Query("statistics;
 
 @api_router.get("/search/teams")
 async def search_teams(query: str = Query(..., min_length=2)):
-    return await sportmonks_client.search_teams(query)
+    result = await sportmonks_client.search_teams(query)
+    if "data" not in result:
+        return {"data": []}
+    return result
 
 @api_router.get("/search/players")
 async def search_players(query: str = Query(..., min_length=2)):
-    return await sportmonks_client.search_players(query)
+    result = await sportmonks_client.search_players(query)
+    if "data" not in result:
+        return {"data": []}
+    return result
 
 
 # ==================== HEAD-TO-HEAD ROUTES ====================

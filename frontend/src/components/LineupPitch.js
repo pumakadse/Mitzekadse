@@ -97,69 +97,236 @@ const PlayerMarker = ({ player, x, y, isHome, delay = 0, isHighlighted = false, 
   );
 };
 
-// Parse formation string like "4-4-2" or "4-3-3"
-const parseFormation = (formationStr) => {
-  if (!formationStr) return [4, 4, 2]; // Default
-  const parts = formationStr.split('-').map(n => parseInt(n) || 0);
-  return parts.length >= 2 ? parts : [4, 4, 2];
-};
-
-// Get player positions based on formation
-const getFormationPositions = (formation, isHome = true) => {
-  const positions = [];
-  const parts = parseFormation(formation);
-  const totalRows = parts.length + 1; // +1 for goalkeeper
+// Formation position mapping - maps formation_position to actual pitch coordinates
+// Formation positions are typically numbered 1-11 in a specific pattern
+// Position 1 = GK, then defenders, midfielders, forwards
+const getPositionCoordinates = (formationPosition, formation, isHome) => {
+  // Parse formation like "4-4-2", "4-3-3", "3-5-2"
+  const parts = formation?.split('-').map(n => parseInt(n) || 0) || [4, 4, 2];
   
-  // Goalkeeper position
-  positions.push({ row: 0, col: 0, total: 1 });
+  // Standard formation position mapping based on common formations
+  // The formation_position field from Sportmonks follows this pattern:
+  // 1 = GK
+  // 2-5 = Defenders (depending on formation)
+  // 6-8 or 6-10 = Midfielders
+  // 9-11 = Forwards
   
-  // Field player positions by row
-  parts.forEach((count, rowIndex) => {
-    for (let i = 0; i < count; i++) {
-      positions.push({ row: rowIndex + 1, col: i, total: count });
+  const positionMap = {
+    // Formation positions for different formations
+    // Each position maps to { row, col } where row is depth (0=GK, 4=striker)
+    // and col is left-right position
+    
+    // 4-4-2 standard
+    '4-4-2': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0 },     // RB
+      3: { row: 1, col: 0.33 },  // RCB
+      4: { row: 1, col: 0.66 },  // LCB
+      5: { row: 1, col: 1 },     // LB
+      6: { row: 2, col: 0 },     // RM
+      7: { row: 2, col: 0.33 },  // RCM
+      8: { row: 2, col: 0.66 },  // LCM
+      9: { row: 2, col: 1 },     // LM
+      10: { row: 3, col: 0.33 }, // RS
+      11: { row: 3, col: 0.66 }, // LS
+    },
+    // 4-3-3 
+    '4-3-3': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0 },     // RB
+      3: { row: 1, col: 0.33 },  // RCB
+      4: { row: 1, col: 0.66 },  // LCB
+      5: { row: 1, col: 1 },     // LB
+      6: { row: 2, col: 0.25 },  // RCM
+      7: { row: 2, col: 0.5 },   // CM
+      8: { row: 2, col: 0.75 },  // LCM
+      9: { row: 3, col: 0 },     // RW
+      10: { row: 3, col: 0.5 },  // ST
+      11: { row: 3, col: 1 },    // LW
+    },
+    // 3-5-2
+    '3-5-2': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0.17 },  // RCB
+      3: { row: 1, col: 0.5 },   // CB
+      4: { row: 1, col: 0.83 },  // LCB
+      5: { row: 2, col: 0 },     // RWB
+      6: { row: 2, col: 0.25 },  // RCM
+      7: { row: 2, col: 0.5 },   // CM
+      8: { row: 2, col: 0.75 },  // LCM
+      9: { row: 2, col: 1 },     // LWB
+      10: { row: 3, col: 0.33 }, // RS
+      11: { row: 3, col: 0.66 }, // LS
+    },
+    // 4-2-3-1
+    '4-2-3-1': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0 },     // RB
+      3: { row: 1, col: 0.33 },  // RCB
+      4: { row: 1, col: 0.66 },  // LCB
+      5: { row: 1, col: 1 },     // LB
+      6: { row: 2, col: 0.33 },  // RDM
+      7: { row: 2, col: 0.66 },  // LDM
+      8: { row: 2.5, col: 0 },   // RAM
+      9: { row: 2.5, col: 0.5 }, // CAM
+      10: { row: 2.5, col: 1 },  // LAM
+      11: { row: 3.5, col: 0.5 }, // ST
+    },
+    // 5-3-2
+    '5-3-2': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0 },     // RWB
+      3: { row: 1, col: 0.25 },  // RCB
+      4: { row: 1, col: 0.5 },   // CB
+      5: { row: 1, col: 0.75 },  // LCB
+      6: { row: 1, col: 1 },     // LWB
+      7: { row: 2, col: 0.25 },  // RCM
+      8: { row: 2, col: 0.5 },   // CM
+      9: { row: 2, col: 0.75 },  // LCM
+      10: { row: 3, col: 0.33 }, // RS
+      11: { row: 3, col: 0.66 }, // LS
+    },
+    // 3-4-3
+    '3-4-3': {
+      1: { row: 0, col: 0.5 },   // GK
+      2: { row: 1, col: 0.17 },  // RCB
+      3: { row: 1, col: 0.5 },   // CB
+      4: { row: 1, col: 0.83 },  // LCB
+      5: { row: 2, col: 0 },     // RM
+      6: { row: 2, col: 0.33 },  // RCM
+      7: { row: 2, col: 0.66 },  // LCM
+      8: { row: 2, col: 1 },     // LM
+      9: { row: 3, col: 0 },     // RW
+      10: { row: 3, col: 0.5 },  // ST
+      11: { row: 3, col: 1 },    // LW
     }
-  });
+  };
   
-  // Convert to x,y percentages
-  return positions.map((pos, idx) => {
-    const rowPercent = isHome 
-      ? 8 + (pos.row * (42 / totalRows)) // Home team on left side (8% to 50%)
-      : 92 - (pos.row * (42 / totalRows)); // Away team on right side (50% to 92%)
-    
-    // Distribute players evenly in their row
-    const spacing = 60 / (pos.total + 1);
-    const yPercent = 20 + (spacing * (pos.col + 1));
-    
-    return { x: rowPercent, y: yPercent, index: idx };
-  });
+  // Get the position map for this formation, or default to 4-4-2
+  const map = positionMap[formation] || positionMap['4-4-2'];
+  const pos = map[formationPosition] || { row: 2, col: 0.5 }; // Default to center midfield
+  
+  // Convert row/col to actual pitch percentages
+  // Row: 0=GK (near goal), 3-4=Forwards (near opponent goal)
+  // For home team (left side): GK at ~8%, forwards at ~45%
+  // For away team (right side): GK at ~92%, forwards at ~55%
+  
+  let xPercent, yPercent;
+  
+  if (isHome) {
+    // Home team on left side, attacking right
+    xPercent = 8 + (pos.row * 10); // GK at 8%, forwards at ~38%
+    yPercent = 15 + (pos.col * 55); // 15% to 70% vertically
+  } else {
+    // Away team on right side, attacking left
+    xPercent = 92 - (pos.row * 10); // GK at 92%, forwards at ~62%
+    yPercent = 15 + (pos.col * 55); // 15% to 70% vertically
+  }
+  
+  return { x: xPercent, y: yPercent };
 };
 
-// Try to determine position from position name
-const getPositionCategory = (positionName) => {
-  if (!positionName) return 'midfielder';
-  const name = positionName.toLowerCase();
+// Get position category from position name or position ID
+const getPositionFromName = (positionName, positionId) => {
+  if (!positionName && !positionId) return { row: 2, col: 0.5 };
   
-  if (name.includes('goalkeeper') || name.includes('keeper') || name === 'gk') return 'goalkeeper';
-  if (name.includes('defender') || name.includes('back') || name === 'cb' || name === 'lb' || name === 'rb') return 'defender';
-  if (name.includes('midfielder') || name.includes('mid') || name === 'cm' || name === 'dm' || name === 'am') return 'midfielder';
-  if (name.includes('forward') || name.includes('striker') || name.includes('winger') || name === 'cf' || name === 'st' || name === 'lw' || name === 'rw') return 'forward';
+  const name = (positionName || '').toLowerCase();
   
-  return 'midfielder';
+  // Goalkeeper
+  if (name.includes('goalkeeper') || name.includes('keeper') || positionId === 24) {
+    return { row: 0, col: 0.5 };
+  }
+  
+  // Defenders
+  if (name.includes('right-back') || name.includes('right back') || positionId === 25) {
+    return { row: 1, col: 0.15 };
+  }
+  if (name.includes('left-back') || name.includes('left back') || positionId === 26) {
+    return { row: 1, col: 0.85 };
+  }
+  if (name.includes('centre-back') || name.includes('center-back') || name.includes('central defender') || positionId === 27) {
+    return { row: 1, col: 0.5 };
+  }
+  if (name.includes('defender')) {
+    return { row: 1, col: 0.5 };
+  }
+  
+  // Midfielders  
+  if (name.includes('right') && (name.includes('midfield') || name.includes('winger'))) {
+    return { row: 2, col: 0.15 };
+  }
+  if (name.includes('left') && (name.includes('midfield') || name.includes('winger'))) {
+    return { row: 2, col: 0.85 };
+  }
+  if (name.includes('defensive midfield') || positionId === 28) {
+    return { row: 1.5, col: 0.5 };
+  }
+  if (name.includes('central midfield') || name.includes('centre midfield') || positionId === 29) {
+    return { row: 2, col: 0.5 };
+  }
+  if (name.includes('attacking midfield') || positionId === 30) {
+    return { row: 2.5, col: 0.5 };
+  }
+  if (name.includes('midfield')) {
+    return { row: 2, col: 0.5 };
+  }
+  
+  // Forwards
+  if (name.includes('right wing') || positionId === 31) {
+    return { row: 3, col: 0.15 };
+  }
+  if (name.includes('left wing') || positionId === 32) {
+    return { row: 3, col: 0.85 };
+  }
+  if (name.includes('striker') || name.includes('centre-forward') || name.includes('center forward') || positionId === 33) {
+    return { row: 3.5, col: 0.5 };
+  }
+  if (name.includes('forward') || name.includes('attacker')) {
+    return { row: 3, col: 0.5 };
+  }
+  
+  return { row: 2, col: 0.5 }; // Default to center midfield
 };
 
-// Sort players by position for lineup display
-const sortPlayersByPosition = (players) => {
-  const positionOrder = { goalkeeper: 0, defender: 1, midfielder: 2, forward: 3 };
+// Main function to get player coordinates
+const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) => {
+  const formationPosition = player?.formation_position;
   
-  return [...players].sort((a, b) => {
-    const posA = a.position?.name || a.player?.position?.name || '';
-    const posB = b.position?.name || b.player?.position?.name || '';
+  // If we have a formation position, use the formation-based mapping
+  if (formationPosition && formationPosition >= 1 && formationPosition <= 11) {
+    return getPositionCoordinates(formationPosition, formation, isHome);
+  }
+  
+  // Otherwise, try to use position name
+  const positionName = player?.position?.name || player?.player?.position?.name;
+  const positionId = player?.position?.id || player?.player?.position?.id;
+  
+  if (positionName || positionId) {
+    const pos = getPositionFromName(positionName, positionId);
     
-    const catA = getPositionCategory(posA);
-    const catB = getPositionCategory(posB);
+    let xPercent, yPercent;
+    if (isHome) {
+      xPercent = 8 + (pos.row * 10);
+      yPercent = 15 + (pos.col * 55);
+    } else {
+      xPercent = 92 - (pos.row * 10);
+      yPercent = 15 + (pos.col * 55);
+    }
     
-    return positionOrder[catA] - positionOrder[catB];
-  });
+    // Add slight offset based on index to prevent overlap
+    yPercent += (index % 3 - 1) * 5;
+    
+    return { x: xPercent, y: yPercent };
+  }
+  
+  // Fallback: distribute evenly
+  const row = Math.floor(index / 4);
+  const col = index % 4;
+  
+  let xPercent = isHome ? (10 + row * 12) : (90 - row * 12);
+  let yPercent = 12 + (col * 20);
+  
+  return { x: xPercent, y: yPercent };
 };
 
 // Main LineupPitch component
@@ -173,19 +340,16 @@ export const LineupPitch = ({
   highlightedPlayers = [],
   onPlayerClick
 }) => {
-  // Sort and limit to starting 11
+  // Filter to only starting XI (type_id 11) and sort by formation position
   const homeStarters = useMemo(() => {
-    const sorted = sortPlayersByPosition(homeLineup);
-    return sorted.slice(0, 11);
+    const starters = homeLineup.filter(p => p.type_id === 11 || (!p.type_id && homeLineup.indexOf(p) < 11));
+    return starters.sort((a, b) => (a.formation_position || 99) - (b.formation_position || 99)).slice(0, 11);
   }, [homeLineup]);
   
   const awayStarters = useMemo(() => {
-    const sorted = sortPlayersByPosition(awayLineup);
-    return sorted.slice(0, 11);
+    const starters = awayLineup.filter(p => p.type_id === 11 || (!p.type_id && awayLineup.indexOf(p) < 11));
+    return starters.sort((a, b) => (a.formation_position || 99) - (b.formation_position || 99)).slice(0, 11);
   }, [awayLineup]);
-  
-  const homePositions = useMemo(() => getFormationPositions(homeFormation, true), [homeFormation]);
-  const awayPositions = useMemo(() => getFormationPositions(awayFormation, false), [awayFormation]);
 
   const isHighlighted = (player) => {
     const playerId = player?.player_id || player?.player?.id || player?.id;
@@ -218,7 +382,7 @@ export const LineupPitch = ({
       
       {/* Home team players */}
       {homeStarters.map((player, idx) => {
-        const pos = homePositions[idx] || { x: 25, y: 50 };
+        const pos = getPlayerCoordinates(player, homeFormation, true, idx, homeStarters.length);
         return (
           <PlayerMarker
             key={`home-${player.player_id || player.id || idx}`}
@@ -235,7 +399,7 @@ export const LineupPitch = ({
       
       {/* Away team players */}
       {awayStarters.map((player, idx) => {
-        const pos = awayPositions[idx] || { x: 75, y: 50 };
+        const pos = getPlayerCoordinates(player, awayFormation, false, idx, awayStarters.length);
         return (
           <PlayerMarker
             key={`away-${player.player_id || player.id || idx}`}
@@ -302,16 +466,15 @@ export const FullLineupView = ({
   highlightedPlayers = [],
   onPlayerClick
 }) => {
-  const homeStarters = homeLineup.slice(0, 11);
-  const homeSubs = homeLineup.slice(11);
-  const awayStarters = awayLineup.slice(0, 11);
-  const awaySubs = awayLineup.slice(11);
+  // Separate starters (type_id 11) and subs (type_id 12)
+  const homeSubs = homeLineup.filter(p => p.type_id === 12);
+  const awaySubs = awayLineup.filter(p => p.type_id === 12);
 
   return (
     <div>
       <LineupPitch
-        homeLineup={homeStarters}
-        awayLineup={awayStarters}
+        homeLineup={homeLineup}
+        awayLineup={awayLineup}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         homeFormation={homeFormation}

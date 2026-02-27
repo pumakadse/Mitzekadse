@@ -315,7 +315,7 @@ const MatchDetail = () => {
                       const homePercent = (homeValue / total) * 100;
 
                       return (
-                        <div key={idx}>
+                        <div key={`stat-${stat.type?.id || idx}`}>
                           <div className="flex justify-between text-sm mb-1">
                             <span className="font-data">{homeValue}</span>
                             <span className="text-text-tertiary">{stat.type?.name || stat.type?.developer_name}</span>

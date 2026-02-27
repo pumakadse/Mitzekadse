@@ -134,6 +134,16 @@ const PlayerMarker = ({ player, x, y, isHome, delay = 0, events = [], onClick })
         )}
         {/* Event badges */}
         <EventBadges events={events} />
+        {/* Jersey number badge */}
+        <div
+          className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-data font-bold text-[9px] shadow-md z-10 border border-black/30"
+          style={{
+            background: isHome ? '#00CC6A' : '#CC0044',
+            color: isHome ? '#000' : '#FFF',
+          }}
+        >
+          {jerseyNumber}
+        </div>
         {/* Captain badge */}
         {player?.captain && (
           <div className="absolute -bottom-0.5 -left-0.5 w-4 h-4 bg-yellow-500 text-black rounded-full flex items-center justify-center text-[7px] font-black shadow z-10">

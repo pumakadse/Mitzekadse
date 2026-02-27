@@ -353,19 +353,19 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     let xPercent;
     if (isHome) {
       // Home team on left side
-      // More spacing between rows for clarity
-      if (row === 1) xPercent = 6;        // GK at 6%
-      else if (row === 2) xPercent = 19;  // Defenders at 19%
-      else if (row === 3) xPercent = 32;  // Midfielders at 32%
-      else if (row === 4) xPercent = 44;  // Forwards at 44%
-      else xPercent = 44;                 // Default for extra rows
+      // Clear separation between defensive lines
+      if (row === 1) xPercent = 5;        // GK at 5%
+      else if (row === 2) xPercent = 17;  // Defenders at 17%
+      else if (row === 3) xPercent = 30;  // Midfielders at 30%
+      else if (row === 4) xPercent = 43;  // Forwards at 43%
+      else xPercent = 43;                 // Default for extra rows
     } else {
       // Away team on right side (mirrored)
-      if (row === 1) xPercent = 94;       // GK at 94%
-      else if (row === 2) xPercent = 81;  // Defenders at 81%
-      else if (row === 3) xPercent = 68;  // Midfielders at 68%
-      else if (row === 4) xPercent = 56;  // Forwards at 56%
-      else xPercent = 56;                 // Default for extra rows
+      if (row === 1) xPercent = 95;       // GK at 95%
+      else if (row === 2) xPercent = 83;  // Defenders at 83%
+      else if (row === 3) xPercent = 70;  // Midfielders at 70%
+      else if (row === 4) xPercent = 57;  // Forwards at 57%
+      else xPercent = 57;                 // Default for extra rows
     }
     
     return { x: xPercent, y: yPercent };

@@ -104,11 +104,14 @@ export const Header = ({ title, subtitle, actions }) => {
 
 export const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Sidebar />
-      <main className="lg:ml-64 pb-20 lg:pb-6">
+      <main className="lg:ml-64 pb-20 lg:pb-6 flex-1">
         {children}
       </main>
+      <div className="lg:ml-64">
+        <Footer />
+      </div>
       <BottomNav />
     </div>
   );

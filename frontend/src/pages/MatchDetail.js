@@ -211,7 +211,7 @@ const MatchDetail = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="h2h" className="w-full">
+        <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val }, { replace: true })} className="w-full">
           <TabsList className="w-full bg-background-paper border border-border mb-4">
             <TabsTrigger value="h2h" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-black">
               H2H

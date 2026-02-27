@@ -335,7 +335,7 @@ async def get_standings(season_id: int, include: Optional[str] = Query("particip
     return await sportmonks_client.get_standings(season_id, include=include)
 
 @api_router.get("/teams/{team_id}")
-async def get_team(team_id: int, include: Optional[str] = Query("players;coach;venue;statistics")):
+async def get_team(team_id: int, include: Optional[str] = Query("players;venue")):
     return await sportmonks_client.get_team(team_id, include=include)
 
 @api_router.get("/players/{player_id}")

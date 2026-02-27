@@ -3,6 +3,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "./components/ui/sonner";
+import { CookieConsent } from "./components/CookieConsent";
 
 // Pages
 import LiveScores from "./pages/LiveScores";
@@ -14,6 +15,8 @@ import PlayerProfile from "./pages/PlayerProfile";
 import Search from "./pages/Search";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Impressum from "./pages/Impressum";
+import Datenschutz from "./pages/Datenschutz";
 
 function App() {
   return (
@@ -30,7 +33,10 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/datenschutz" element={<Datenschutz />} />
           </Routes>
+          <CookieConsent />
         </BrowserRouter>
         <Toaster position="top-right" richColors />
       </div>

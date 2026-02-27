@@ -140,6 +140,22 @@ class FlashPulseAPITester:
         """Test standings endpoint with a season ID"""
         return self.run_test(f"Get Standings for Season {season_id}", "GET", f"/standings/{season_id}", 200)
 
+    def test_head_to_head(self, team1_id=1789, team2_id=85):
+        """Test H2H endpoint - last 5 matches between teams"""
+        return self.run_test(f"H2H: Team {team1_id} vs {team2_id}", "GET", f"/h2h/{team1_id}/{team2_id}", 200)
+
+    def test_team_form(self, team_id=1789):
+        """Test team form endpoint - last 5 matches for a team"""
+        return self.run_test(f"Team Form: Team {team_id}", "GET", f"/team-form/{team_id}", 200)
+
+    def test_fixture_details(self, fixture_id=19425690):
+        """Test fixture details endpoint"""
+        return self.run_test(f"Fixture Details: {fixture_id}", "GET", f"/fixtures/{fixture_id}", 200)
+
+    def test_team_details(self, team_id=1789):
+        """Test team details endpoint"""
+        return self.run_test(f"Team Details: {team_id}", "GET", f"/teams/{team_id}", 200)
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting FlashPulse API Tests...")

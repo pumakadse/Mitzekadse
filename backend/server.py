@@ -319,7 +319,7 @@ async def get_fixtures_by_date(date: str, include: Optional[str] = Query("partic
     return await sportmonks_client.get_fixtures_by_date(date, include=include)
 
 @api_router.get("/fixtures/{fixture_id}")
-async def get_fixture(fixture_id: int, include: Optional[str] = Query("participants;scores;league;events;lineups;statistics;state")):
+async def get_fixture(fixture_id: int, include: Optional[str] = Query("participants;scores;league;events;lineups;statistics;state;formations")):
     return await sportmonks_client.get_fixture_by_id(fixture_id, include=include)
 
 @api_router.get("/leagues")

@@ -9,14 +9,14 @@ export const getMatchStatus = (state) => {
   const stateId = state.id || state.state_id;
   const stateName = state.name || state.state || '';
   
-  // Live states
-  if ([2, 3, 4, 5, 25].includes(stateId) || stateName.toLowerCase().includes('live') || stateName.toLowerCase().includes('half')) {
-    return { text: state.short_name || 'LIVE', type: 'live' };
+  // Finished states (check FIRST - state 5 = FT = Full Time)
+  if ([5, 6, 7, 8, 9, 10, 11].includes(stateId) || stateName.toLowerCase().includes('finished') || stateName === 'FT') {
+    return { text: 'FT', type: 'finished' };
   }
   
-  // Finished states
-  if ([5, 6, 7, 8, 9, 10, 11].includes(stateId) || stateName.toLowerCase().includes('finished') || stateName.toLowerCase().includes('ft')) {
-    return { text: 'FT', type: 'finished' };
+  // Live states
+  if ([2, 3, 4, 25].includes(stateId) || stateName.toLowerCase().includes('live') || stateName.toLowerCase().includes('half')) {
+    return { text: state.short_name || 'LIVE', type: 'live' };
   }
   
   // Scheduled

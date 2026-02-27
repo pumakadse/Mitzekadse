@@ -345,18 +345,27 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     
     // Calculate X position (horizontal - depth on pitch)
     // Row 1 = GK near own goal
+    // Row 2 = Defenders
+    // Row 3 = Midfielders  
     // Row 4 = Forwards near center/opponent's half
     const totalRows = parts.length + 1; // +1 for GK row
     
     let xPercent;
     if (isHome) {
       // Home team on left side
-      // GK (row 1) at 6%, Defenders at ~18%, Midfielders at ~30%, Forwards at ~42%
-      xPercent = 6 + ((row - 1) / (totalRows - 1)) * 38;
+      // More spacing between rows for clarity
+      if (row === 1) xPercent = 6;        // GK at 6%
+      else if (row === 2) xPercent = 19;  // Defenders at 19%
+      else if (row === 3) xPercent = 32;  // Midfielders at 32%
+      else if (row === 4) xPercent = 44;  // Forwards at 44%
+      else xPercent = 44;                 // Default for extra rows
     } else {
-      // Away team on right side  
-      // GK (row 1) at 94%, Defenders at ~82%, Midfielders at ~70%, Forwards at ~58%
-      xPercent = 94 - ((row - 1) / (totalRows - 1)) * 38;
+      // Away team on right side (mirrored)
+      if (row === 1) xPercent = 94;       // GK at 94%
+      else if (row === 2) xPercent = 81;  // Defenders at 81%
+      else if (row === 3) xPercent = 68;  // Midfielders at 68%
+      else if (row === 4) xPercent = 56;  // Forwards at 56%
+      else xPercent = 56;                 // Default for extra rows
     }
     
     return { x: xPercent, y: yPercent };

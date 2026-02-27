@@ -271,8 +271,8 @@ const MatchDetail = () => {
                   awayLineup={awayLineup}
                   homeTeam={homeTeam}
                   awayTeam={awayTeam}
-                  homeFormation={fixture?.formations?.localteam_formation || '4-4-2'}
-                  awayFormation={fixture?.formations?.visitorteam_formation || '4-4-2'}
+                  homeFormation={formations.home}
+                  awayFormation={formations.away}
                   onPlayerClick={(player) => {
                     const playerId = player?.player_id || player?.player?.id;
                     if (playerId) navigate(`/player/${playerId}`);

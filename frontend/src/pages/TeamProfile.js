@@ -133,34 +133,34 @@ const TeamProfile = () => {
                   <tbody>
                     {players.map((player, idx) => (
                       <motion.tr
-                        key={player.id || idx}
+                        key={player.player_id || player.id || `player-${idx}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: idx * 0.02 }}
                         className="border-b border-border/50 hover:bg-white/5 cursor-pointer transition-colors"
-                        onClick={() => navigate(`/player/${player.id}`)}
+                        onClick={() => navigate(`/player/${player.player_id || player.player?.id || player.id}`)}
                       >
                         <td className="py-3 px-4 font-data text-text-secondary">
                           {player.jersey_number || '-'}
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            {player.image_path && (
-                              <img src={player.image_path} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            {(player.player?.image_path || player.image_path) && (
+                              <img src={player.player?.image_path || player.image_path} alt="" className="w-8 h-8 rounded-full object-cover" />
                             )}
-                            <span className="font-medium">{player.display_name || player.name}</span>
+                            <span className="font-medium">{player.player?.display_name || player.player?.name || player.display_name || player.name || 'Unknown'}</span>
                           </div>
                         </td>
                         <td className="py-3 px-4 text-text-secondary hidden sm:table-cell">
-                          {player.position?.name || player.detailed_position?.name || '-'}
+                          {player.position?.name || player.player?.position?.name || player.detailed_position?.name || '-'}
                         </td>
                         <td className="py-3 px-4 hidden md:table-cell">
                           <div className="flex items-center gap-2">
-                            {player.nationality?.image_path && (
-                              <img src={player.nationality.image_path} alt="" className="w-5 h-4 object-contain" />
+                            {(player.player?.nationality?.image_path || player.nationality?.image_path) && (
+                              <img src={player.player?.nationality?.image_path || player.nationality?.image_path} alt="" className="w-5 h-4 object-contain" />
                             )}
                             <span className="text-text-secondary text-sm">
-                              {player.nationality?.name || '-'}
+                              {player.player?.nationality?.name || player.nationality?.name || '-'}
                             </span>
                           </div>
                         </td>

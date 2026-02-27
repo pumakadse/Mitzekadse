@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Layout, Header } from '../components/Layout';
 import { getMatchStatus, getScore, LoadingSpinner, EmptyState } from '../components/MatchComponents';
 import { HeadToHeadSection } from '../components/HeadToHead';
+import { FullLineupView } from '../components/LineupPitch';
 import { useFixture } from '../hooks/useApi';
 import { useAuth } from '../context/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';

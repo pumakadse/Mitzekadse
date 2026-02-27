@@ -178,6 +178,62 @@ export const usePlayer = (playerId) => {
   return { data, loading, error };
 };
 
+export const useHeadToHead = (team1Id, team2Id) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchH2H = async () => {
+      if (!team1Id || !team2Id) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await axios.get(`${API}/h2h/${team1Id}/${team2Id}`);
+        setData(response.data?.data || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchH2H();
+  }, [team1Id, team2Id]);
+
+  return { data, loading, error };
+};
+
+export const useTeamForm = (teamId) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      if (!teamId) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await axios.get(`${API}/team-form/${teamId}`);
+        setData(response.data?.data || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchForm();
+  }, [teamId]);
+
+  return { data, loading, error };
+};
+
 export const useSearch = () => {
   const [results, setResults] = useState({ teams: [], players: [] });
   const [loading, setLoading] = useState(false);

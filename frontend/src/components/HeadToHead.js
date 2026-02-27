@@ -236,7 +236,7 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
                     </h5>
                     <div className="space-y-1">
                       {getGoals(homeEvents).map((event, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm">
+                        <div key={`home-goal-${idx}`} className="flex items-center gap-2 text-sm">
                           <span className="font-data text-text-tertiary w-8">{event.minute}'</span>
                           <span>{event.player_name || event.player?.display_name}</span>
                           {event.related_player_name && (
@@ -256,7 +256,7 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
                     </h5>
                     <div className="space-y-1">
                       {getCards(homeEvents).map((event, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm">
+                        <div key={`home-card-${idx}`} className="flex items-center gap-2 text-sm">
                           <span className="font-data text-text-tertiary w-8">{event.minute}'</span>
                           <EventIcon event={event} />
                           <span>{event.player_name || event.player?.display_name}</span>

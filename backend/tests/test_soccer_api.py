@@ -134,12 +134,12 @@ class TestLeagueAndStandings:
         assert isinstance(data["data"], list)
     
     def test_get_livescores(self):
-        """Get live scores (may be empty)"""
+        """Get live scores (may be empty or return message for no matches)"""
         response = requests.get(f"{BASE_URL}/api/livescores/all")
         assert response.status_code == 200
         data = response.json()
-        assert "data" in data
-        # May be empty if no live matches
+        # May return data array or message if no live matches (free plan limitation)
+        assert "data" in data or "message" in data
 
 
 if __name__ == "__main__":

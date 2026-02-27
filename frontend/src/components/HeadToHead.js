@@ -274,7 +274,7 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
                     </h5>
                     <div className="space-y-1">
                       {getSubstitutions(homeEvents).map((event, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm">
+                        <div key={`home-sub-${idx}`} className="flex items-center gap-2 text-sm">
                           <span className="font-data text-text-tertiary w-8">{event.minute}'</span>
                           <span className="text-primary">IN:</span>
                           <span>{event.player_name || event.player?.display_name}</span>
@@ -286,34 +286,6 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
                           )}
                         </div>
                       ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Lineup */}
-                {homeLineup.length > 0 && (
-                  <div>
-                    <h5 className="text-xs text-text-tertiary uppercase mb-2 flex items-center gap-1">
-                      <Users size={12} /> Lineup
-                    </h5>
-                    <div className="grid grid-cols-2 gap-1">
-                      {homeLineup.slice(0, 11).map((player, idx) => {
-                        const inCurrentLineup = isInCurrentLineup(player.player_id || player.player?.id, homeTeam?.id);
-                        return (
-                          <div 
-                            key={idx} 
-                            className={`flex items-center gap-2 text-xs p-1 rounded ${
-                              inCurrentLineup ? 'bg-primary/10 border border-primary/30' : ''
-                            }`}
-                          >
-                            <span className="font-data text-text-tertiary w-5">{player.jersey_number}</span>
-                            <span className={inCurrentLineup ? 'text-primary' : ''}>
-                              {player.player?.display_name || player.player_name}
-                            </span>
-                            {inCurrentLineup && <span className="text-primary text-[10px]">TODAY</span>}
-                          </div>
-                        );
-                      })}
                     </div>
                   </div>
                 )}

@@ -301,7 +301,6 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     // Row 2 = Defenders (typically 3-5)
     // Row 3 = Midfielders (typically 3-5)
     // Row 4 = Forwards (typically 1-3)
-    // Row 5 = might exist for some formations
     
     const parts = formation?.split('-').map(n => parseInt(n) || 0) || [4, 4, 2];
     let maxColsInRow;
@@ -315,28 +314,35 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     } else if (row === 4) {
       maxColsInRow = parts[2] || 2; // Forwards
     } else if (row === 5 && parts.length > 3) {
-      maxColsInRow = parts[3] || 1; // Extra row if formation has 4 parts
+      maxColsInRow = parts[3] || 1;
     } else {
       maxColsInRow = 4;
     }
     
-    // Calculate Y position (column position - spread across width)
-    // Column 1 = left side, higher column = right side
-    const yPercent = maxColsInRow === 1 
-      ? 50 // Center for GK
-      : 15 + ((col - 1) / (maxColsInRow - 1)) * 55; // 15% to 70%
-    
-    // Calculate X position (row position - depth on pitch)
-    // Row 1 = closest to goal, Row 4+ = closest to opponent
-    let xPercent;
-    const totalRows = parts.length + 1; // +1 for GK
-    
-    if (isHome) {
-      // Home team on left side (attacking right)
-      xPercent = 8 + ((row - 1) / (totalRows - 1)) * 40; // 8% to 48%
+    // Calculate Y position (vertical - spread players across the pitch width)
+    // In football: column 1 = one side, column 4 = other side
+    // Y increases downward in CSS, so col 1 should be at top
+    let yPercent;
+    if (maxColsInRow === 1) {
+      yPercent = 50; // Center for GK
     } else {
-      // Away team on right side (attacking left)
-      xPercent = 92 - ((row - 1) / (totalRows - 1)) * 40; // 92% to 52%
+      // Spread from 18% to 82% of the pitch height
+      yPercent = 18 + ((col - 1) / (maxColsInRow - 1)) * 64;
+    }
+    
+    // Calculate X position (horizontal - depth on pitch)
+    // Row 1 = closest to own goal, Row 4 = attacking position
+    const totalRows = parts.length + 1; // +1 for GK row
+    
+    let xPercent;
+    if (isHome) {
+      // Home team on left side (GK at left, forwards toward center)
+      // Row 1 (GK) at ~8%, Row 4 (forwards) at ~45%
+      xPercent = 8 + ((row - 1) / (totalRows - 1)) * 37;
+    } else {
+      // Away team on right side (GK at right, forwards toward center)
+      // Row 1 (GK) at ~92%, Row 4 (forwards) at ~55%
+      xPercent = 92 - ((row - 1) / (totalRows - 1)) * 37;
     }
     
     return { x: xPercent, y: yPercent };
@@ -348,11 +354,11 @@ const getPlayerCoordinates = (player, formation, isHome, index, totalPlayers) =>
     return getPositionCoordinates(formationPosition, formation, isHome);
   }
   
-  // Last resort fallback
+  // Last resort fallback - spread evenly
   const rowIdx = Math.floor(index / 4);
   const colIdx = index % 4;
   let xPercent = isHome ? (10 + rowIdx * 12) : (90 - rowIdx * 12);
-  let yPercent = 15 + (colIdx * 20);
+  let yPercent = 18 + (colIdx * 20);
   
   return { x: xPercent, y: yPercent };
 };

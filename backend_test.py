@@ -185,6 +185,15 @@ class FlashPulseAPITester:
         self.test_leagues()
         self.test_standings()
 
+        # H2H specific endpoint tests
+        print("\n🏆 Testing H2H Feature Endpoints...")
+        self.test_head_to_head(1789, 85)  # Odense BK vs FC København
+        self.test_team_form(1789)  # Odense BK form
+        self.test_team_form(85)    # FC København form
+        self.test_fixture_details(19425690)  # Match details
+        self.test_team_details(1789)  # Odense BK details
+        self.test_team_details(85)   # FC København details
+
         # Print summary
         print("\n" + "=" * 50)
         print(f"📊 Test Summary: {self.tests_passed}/{self.tests_run} tests passed")

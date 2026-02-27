@@ -142,5 +142,99 @@ class TestLeagueAndStandings:
         assert "data" in data or "message" in data
 
 
+class TestFixtureEndpoints:
+    """Fixture detail endpoint tests - verifies lineups.player include for player images"""
+    
+    def test_fixture_returns_state_id(self):
+        """Test fixture 19425691 (Randers FC vs Fredericia) returns correct state_id=5 (FT)"""
+        response = requests.get(f"{BASE_URL}/api/fixtures/19425691")
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify fixture data
+        assert "data" in data
+        fixture = data["data"]
+        assert fixture.get("id") == 19425691
+        
+        # State ID 5 = Full Time (FT) - critical for FT/Live bug fix
+        assert fixture.get("state_id") == 5
+    
+    def test_fixture_lineups_have_player_data(self):
+        """Test fixture includes nested player objects in lineups for player faces"""
+        response = requests.get(f"{BASE_URL}/api/fixtures/19425691")
+        assert response.status_code == 200
+        data = response.json()
+        
+        fixture = data["data"]
+        lineups = fixture.get("lineups", [])
+        
+        # Should have 40 lineup entries (22 starters + 18 subs)
+        assert len(lineups) >= 22
+        
+        # Verify nested player data with image_path exists
+        players_with_images = 0
+        for lineup in lineups:
+            player = lineup.get("player", {})
+            if player and player.get("image_path"):
+                players_with_images += 1
+                # Verify image_path is from Sportmonks CDN
+                assert "sportmonks" in player["image_path"]
+        
+        # Most/all players should have images
+        assert players_with_images >= 20, f"Only {players_with_images} players have images"
+    
+    def test_fixture_has_formations(self):
+        """Test fixture includes formations for pitch display"""
+        response = requests.get(f"{BASE_URL}/api/fixtures/19425691")
+        assert response.status_code == 200
+        data = response.json()
+        
+        fixture = data["data"]
+        formations = fixture.get("formations", [])
+        
+        # Should have formations for both teams
+        assert len(formations) >= 2
+        
+        # Extract formation strings
+        formation_strings = [f.get("formation") for f in formations]
+        
+        # Verify expected formations (home: 4-4-1-1, away: 4-2-3-1)
+        assert "4-4-1-1" in formation_strings or "4-2-3-1" in formation_strings
+    
+    def test_fixture_has_events(self):
+        """Test fixture includes events for event badges (goals, cards, subs)"""
+        response = requests.get(f"{BASE_URL}/api/fixtures/19425691")
+        assert response.status_code == 200
+        data = response.json()
+        
+        fixture = data["data"]
+        events = fixture.get("events", [])
+        
+        # Should have multiple events (17 expected)
+        assert len(events) >= 10
+        
+        # Verify event structure
+        for event in events[:5]:
+            assert "type_id" in event
+            # type_id 14=goal, 18=substitution, 19=card
+            assert event["type_id"] in [14, 15, 16, 17, 18, 19, 20, 21, 22, 24]
+    
+    def test_fixture_participants_have_meta(self):
+        """Test participants include meta.location for home/away identification"""
+        response = requests.get(f"{BASE_URL}/api/fixtures/19425691")
+        assert response.status_code == 200
+        data = response.json()
+        
+        fixture = data["data"]
+        participants = fixture.get("participants", [])
+        
+        assert len(participants) == 2
+        
+        # Verify home/away location
+        locations = [p.get("meta", {}).get("location") for p in participants]
+        assert "home" in locations
+        assert "away" in locations
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -183,22 +183,16 @@ const getPlayerCoordinates = (player, formation, isHome, index) => {
     let yPercent;
     if (maxColsInRow === 1) {
       yPercent = 50;
-    } else if (row === numSegments + 1) {
-      // Last row (strikers): center them closer together
-      if (maxColsInRow === 2) {
-        yPercent = col === 1 ? 40 : 60;
-      } else if (maxColsInRow === 3) {
-        yPercent = 30 + ((col - 1) / 2) * 40;
-      } else {
-        yPercent = 85 - ((col - 1) / (maxColsInRow - 1)) * 70;
-      }
+    } else if (maxColsInRow === 2) {
+      yPercent = col === 1 ? 38 : 62;
+    } else if (maxColsInRow === 3) {
+      yPercent = [30, 50, 70][col - 1] || 50;
+    } else if (maxColsInRow === 4) {
+      yPercent = [22, 38, 62, 78][col - 1] || 50;
+    } else if (maxColsInRow === 5) {
+      yPercent = [18, 33, 50, 67, 82][col - 1] || 50;
     } else {
-      // All other rows: spread 85 -> 15 (col 1=top, col max=bottom)
-      if (maxColsInRow === 1) {
-        yPercent = 50;
-      } else {
-        yPercent = 85 - ((col - 1) / (maxColsInRow - 1)) * 70;
-      }
+      yPercent = 20 + ((col - 1) / (maxColsInRow - 1)) * 60;
     }
 
     // X position (horizontal depth) - dynamic based on number of formation segments

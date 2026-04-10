@@ -196,17 +196,21 @@ const H2HMatchCard = ({ fixture, highlightTeamId, showDetails = false, currentLi
                 </h5>
                 <div className="relative">
                   <LineupPitch
-                    homeLineup={homeLineup.slice(0, 11)}
-                    awayLineup={awayLineup.slice(0, 11)}
+                    homeLineup={homeLineup}
+                    awayLineup={awayLineup}
                     homeTeam={homeTeam}
                     awayTeam={awayTeam}
-                    homeFormation={fixture?.formations?.localteam_formation || '4-4-2'}
-                    awayFormation={fixture?.formations?.visitorteam_formation || '4-4-2'}
-                    highlightedPlayers={
-                      currentLineups 
-                        ? currentLineups.map(p => p.player_id || p.player?.id).filter(Boolean)
-                        : []
+                    homeFormation={
+                      (Array.isArray(fixture?.formations)
+                        ? fixture.formations.find(f => f.location === 'home')?.formation
+                        : fixture?.formations?.localteam_formation) || '4-4-2'
                     }
+                    awayFormation={
+                      (Array.isArray(fixture?.formations)
+                        ? fixture.formations.find(f => f.location === 'away')?.formation
+                        : fixture?.formations?.visitorteam_formation) || '4-4-2'
+                    }
+                    events={events}
                   />
                   {currentLineups && currentLineups.length > 0 && (
                     <div className="mt-2 flex items-center gap-2 text-xs text-text-tertiary">

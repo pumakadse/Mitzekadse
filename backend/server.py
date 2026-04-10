@@ -173,7 +173,7 @@ class SportmonksClient:
     async def get_head_to_head(self, team1_id: int, team2_id: int) -> Dict[str, Any]:
         """Get head-to-head matches between two teams"""
         params = {
-            "include": "participants;scores;events;lineups;state;league"
+            "include": "participants;scores;events;lineups.player;state;league;formations"
         }
         return await self._make_request(f"fixtures/head-to-head/{team1_id}/{team2_id}", params)
 
@@ -380,7 +380,7 @@ async def get_team_form(team_id: int):
     try:
         result = await sportmonks_client.get_team_fixtures(
             team_id, 
-            include="participants;scores;events;state;league"
+            include="participants;scores;events;lineups.player;state;league;formations"
         )
         matches = result.get("data", [])
         if isinstance(matches, list):

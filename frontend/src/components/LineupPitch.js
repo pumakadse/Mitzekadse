@@ -179,20 +179,20 @@ const getPlayerCoordinates = (player, formation, isHome, index) => {
       maxColsInRow = (segIndex >= 0 && segIndex < parts.length) ? parts[segIndex] : 4;
     }
 
-    // Y position (vertical spread across pitch width)
+    // Y position (vertical spread across pitch width) - compact, realistic
     let yPercent;
     if (maxColsInRow === 1) {
       yPercent = 50;
     } else if (maxColsInRow === 2) {
-      yPercent = col === 1 ? 38 : 62;
+      yPercent = [42, 58][col - 1] || 50;
     } else if (maxColsInRow === 3) {
-      yPercent = [30, 50, 70][col - 1] || 50;
+      yPercent = [35, 50, 65][col - 1] || 50;
     } else if (maxColsInRow === 4) {
-      yPercent = [22, 38, 62, 78][col - 1] || 50;
+      yPercent = [28, 42, 58, 72][col - 1] || 50;
     } else if (maxColsInRow === 5) {
-      yPercent = [18, 33, 50, 67, 82][col - 1] || 50;
+      yPercent = [22, 36, 50, 64, 78][col - 1] || 50;
     } else {
-      yPercent = 20 + ((col - 1) / (maxColsInRow - 1)) * 60;
+      yPercent = 28 + ((col - 1) / (maxColsInRow - 1)) * 44;
     }
 
     // X position (horizontal depth) - dynamic based on number of formation segments
